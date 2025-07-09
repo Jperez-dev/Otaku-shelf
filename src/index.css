@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1f2937;
+  --color-accent: #3b82f6;
+
+  --size-text: 3rem;
+}
+
+.dark {
+  --color-bg: black;
+  --color-text: #f9fafb;
+  --color-accent: #60a5fa;
+}
+
+/* .dark {
+  background-color: black;
+} */
