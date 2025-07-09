@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 
-// Layout
+// Layout components
 import Header from "./components/Header";
 import Breadcrumb from "./components/Breadcrumb";
 
@@ -14,17 +14,29 @@ const MangaDetail = lazy(() => import("./pages/MangaDetail"));
 const Bookmarks = lazy(() => import("./pages/Bookmarks"));
 
 export default function App() {
-  return (
-    <div className="min-h-screen bg-bg text-text transition-colors duration-300">
-      <Header />
-      <main className="max-w-screen-xl mx-auto px-4 pt-4">
-        <Breadcrumb />
+  const [isDark, setIsDark] = useState(true);
 
+  useEffect(() => {
+    // Apply dark class to html element
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+  };
+
+  return (
+    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-300">
+      <Header isDark={isDark} toggleDarkMode={toggleDarkMode} />
+      <main className="max-w-7xl mx-auto px-4 pt-4">
+        <Breadcrumb />
         <Suspense
           fallback={
-            <div className="text-center py-8 text-gray-500">
-              Loading page...
-            </div>
+            <div className="text-center py-8 text-muted">Loading page...</div>
           }
         >
           <Routes>
