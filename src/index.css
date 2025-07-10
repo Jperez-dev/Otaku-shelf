@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Fascinate+Inline&family=Graduate&family=Libertinus+Mono&family=Lora:ital,wght@0,400..700;1,400..700&family=Pacifico&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Satisfy&family=Spicy+Rice&family=Tangerine:wght@400;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -16,4 +17,19 @@
   --color-surface: #1f2937;
   --color-border: #374151;
   --color-muted: #9ca3af;
+}
+
+/* RESETS */
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+/* default*/
+html,
+body {
+  background-color: var(--color-bg);
+  width: 100%;
+  height: 100%;
 }

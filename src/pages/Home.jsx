@@ -1,9 +1,9 @@
+import Hero from "../components/Hero";
+
 export default function Home() {
   return (
-    <div className="py-8">
-      <h1 className="text-4xl font-bold text-text mb-8">
-        Welcome to MangaViewer
-      </h1>
+    <div className="w-full p-4 flex flex-col justify-center">
+      <Hero />
     </div>
   );
 }

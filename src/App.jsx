@@ -32,7 +32,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-300">
       <Header isDark={isDark} toggleDarkMode={toggleDarkMode} />
-      <main className="max-w-7xl mx-auto px-4 pt-4">
+      <main className="w-full">
         <Breadcrumb />
         <Suspense
           fallback={
