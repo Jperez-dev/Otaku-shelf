@@ -48,7 +48,7 @@ function PopularList({ mangaList }) {
           (rel) => rel.type === "cover_art"
         );
         const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName ? `/api/covers/${id}/${fileName}` : "";
+        const imageUrl = fileName ? `/covers/${id}/${fileName}` : "";
 
         const authorName =
           manga.relationships[0].attributes.name || "No Author";
