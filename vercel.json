@@ -1,16 +1,22 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/"
-    },
-    {
       "source": "/api/:path*",
       "destination": "https://api.mangadex.org/:path*"
     },
     {
       "source": "/covers/:path*",
       "destination": "https://uploads.mangadex.org/covers/:path*"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/"
+    },
+    {
+      "src": "/whats-new",
+      "dest": ""
     }
   ]
 }
