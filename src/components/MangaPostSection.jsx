@@ -8,12 +8,19 @@ import { useBookmarks } from "../context/BookmarksContext";
 
 // Popular List Component for Home Page
 function PopularList({ mangaList }) {
-  const { bookmarkedIds, toggleBookmark, isBookmarked, canAddMore, getBookmarkCount, getMaxBookmarks } = useBookmarks();
+  const {
+    bookmarkedIds,
+    toggleBookmark,
+    isBookmarked,
+    canAddMore,
+    getBookmarkCount,
+    getMaxBookmarks,
+  } = useBookmarks();
 
   const handleBookmarkClick = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isBookmarked(id)) {
       // Always allow removing bookmarks
       toggleBookmark(id);
@@ -35,16 +42,13 @@ function PopularList({ mangaList }) {
     <div className="space-y-4">
       {mangaList.map((manga, index) => {
         const title =
-          manga.attributes.title.en ||
-          Object.values(manga.attributes.title)[0];
+          manga.attributes.title.en || Object.values(manga.attributes.title)[0];
         const id = manga.id;
         const coverRel = manga.relationships.find(
           (rel) => rel.type === "cover_art"
         );
         const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName
-          ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
-          : "";
+        const imageUrl = fileName ? `/api/covers/${id}/${fileName}` : "";
 
         const authorName =
           manga.relationships[0].attributes.name || "No Author";
@@ -61,9 +65,7 @@ function PopularList({ mangaList }) {
           >
             {/* Rank Badge */}
             <div className="flex-shrink-0 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-              <span className="text-black font-bold text-sm">
-                {index + 1}
-              </span>
+              <span className="text-black font-bold text-sm">{index + 1}</span>
             </div>
 
             {/* Cover Image */}
@@ -367,9 +369,7 @@ export default function MangaPostSection({ section }) {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#f9fafb]">
-              Hottest
-            </h2>
+            <h2 className="text-2xl font-bold text-[#f9fafb]">Hottest</h2>
           </div>
           <button
             onClick={() => navigate("/popular")}
