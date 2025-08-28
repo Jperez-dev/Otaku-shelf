@@ -8,5 +8,15 @@
       "source": "/covers/:path*",
       "destination": "https://uploads.mangadex.org/covers/:path*"
     }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/"
+    },
+    {
+      "src": "/whats-new",
+      "dest": "/"
+    }
   ]
 }
