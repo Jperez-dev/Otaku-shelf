@@ -2,12 +2,19 @@ import { Link } from "react-router-dom";
 import { useBookmarks } from "../context/BookmarksContext";
 
 export default function MangaCard({ mangaList }) {
-  const { bookmarkedIds, toggleBookmark, isBookmarked, canAddMore, getBookmarkCount, getMaxBookmarks } = useBookmarks();
+  const {
+    bookmarkedIds,
+    toggleBookmark,
+    isBookmarked,
+    canAddMore,
+    getBookmarkCount,
+    getMaxBookmarks,
+  } = useBookmarks();
 
   const handleBookmarkClick = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isBookmarked(id)) {
       // Always allow removing bookmarks
       toggleBookmark(id);
@@ -30,16 +37,13 @@ export default function MangaCard({ mangaList }) {
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 2xl:grid-cols-6">
       {mangaList.map((manga) => {
         const title =
-          manga.attributes.title.en ||
-          Object.values(manga.attributes.title)[0];
+          manga.attributes.title.en || Object.values(manga.attributes.title)[0];
         const id = manga.id;
         const coverRel = manga.relationships.find(
           (rel) => rel.type === "cover_art"
         );
         const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName
-          ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
-          : "";
+        const imageUrl = fileName ? `/covers/${id}/${fileName}` : "";
 
         const isCurrentlyBookmarked = isBookmarked(id);
         const canSave = canAddMore() || isCurrentlyBookmarked;
@@ -56,7 +60,7 @@ export default function MangaCard({ mangaList }) {
                   alt={title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                
+
                 {/* Bookmark Button */}
                 <button
                   onClick={(e) => handleBookmarkClick(e, id)}
@@ -70,7 +74,9 @@ export default function MangaCard({ mangaList }) {
                   disabled={!canSave && !isCurrentlyBookmarked}
                 >
                   <svg
-                    className={`w-4 h-4 ${isCurrentlyBookmarked ? "fill-current" : ""}`}
+                    className={`w-4 h-4 ${
+                      isCurrentlyBookmarked ? "fill-current" : ""
+                    }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -84,13 +90,14 @@ export default function MangaCard({ mangaList }) {
                   </svg>
                 </button>
               </div>
-              
+
               <div className="p-2">
                 <h4 className="text-white text-sm font-semibold truncate group-hover:text-[#c77dff] transition-colors duration-300">
                   {title}
                 </h4>
                 <p className="text-gray-400 text-xs truncate mt-1">
-                  {manga.relationships?.find((r) => r.type === "author")?.attributes?.name || "Unknown"}
+                  {manga.relationships?.find((r) => r.type === "author")
+                    ?.attributes?.name || "Unknown"}
                 </p>
               </div>
             </Link>
