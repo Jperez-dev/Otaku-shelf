@@ -5,7 +5,7 @@ export default function DynamicBreadcrumbs() {
   const segments = location.pathname.split("/").filter(Boolean);
 
   return (
-    <nav className="text-sm text-gray-500 mb-4 pt-4 pl-4">
+    <nav className="text-[clamp(0.5rem,3.5vw,1.2rem)] text-gray-500 mb-4 pt-4 pl-4">
       <Link to="/" className="hover:underline">
         Home
       </Link>

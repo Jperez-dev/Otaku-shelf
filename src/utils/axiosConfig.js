@@ -1,18 +1,16 @@
 import axios from "axios";
 
 export const apiCover = axios.create({
-  baseURL: "https://uploads.mangadex.org/covers", // ⬅️ Replace with your actual base API
+  baseURL: "https://uploads.mangadex.org/covers",
   timeout: 5000, // 5 seconds timeout
   headers: {
     "Content-Type": "application/json",
   },
 });
-export const api = axios.create({
-  baseURL: "https://corsproxy.io/?https://api.mangadex.org/manga", // ⬅️ Replace with your actual base API
+export const apiManga = axios.create({
+  baseURL: "https://api.mangadex.org",
   timeout: 5000, // 5 seconds timeout
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-export default api;

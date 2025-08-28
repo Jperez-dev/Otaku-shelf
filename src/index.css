@@ -1,22 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Fascinate+Inline&family=Graduate&family=Libertinus+Mono&family=Lora:ital,wght@0,400..700;1,400..700&family=Pacifico&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Satisfy&family=Spicy+Rice&family=Tangerine:wght@400;700&display=swap");
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-xmd: 920px;
+}
+
+@layer utilities {
+  @media (min-width: 1720px) {
+    .custom-breakpoint-7 {
+      grid-column: span 7 / span 7;
+    }
+    .custom-breakpoint-3 {
+      grid-column: span 3 / span 3;
+    }
+  }
+}
+
 :root {
-  --color-bg: #ffffff;
+  --color-bg: #f5f5f5;
   --color-text: #1f2937;
   --color-accent: #3b82f6;
   --color-surface: #f9fafb;
   --color-border: #e5e7eb;
   --color-muted: #6b7280;
+  --color-prev: #9000ff;
 }
 
 .dark {
-  --color-bg: #000000;
+  --color-bg: #120918;
   --color-text: #f9fafb;
   --color-accent: #60a5fa;
   --color-surface: #1f2937;
   --color-border: #374151;
   --color-muted: #9ca3af;
+  --color-prev: #cacaca;
 }
 
 /* RESETS */
@@ -28,8 +45,24 @@
 
 /* default*/
 html,
-body {
+body,
+#root {
   background-color: var(--color-bg);
   width: 100%;
-  height: 100%;
+  min-height: 100vh; /* Changed from height: 100% */
+  height: auto; /* Allow content to expand */
+}
+
+/* Responsive text clamping helpers (requires tailwind line-clamp plugin in v3, but we recreate minimal utility) */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
