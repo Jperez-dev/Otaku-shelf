@@ -46,6 +46,7 @@ export default function MangaCard({ mangaList }) {
           ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
           : "";
         console.log(imageUrl);
+        //https://uploads.mangadex.org/covers/55f1779c-3b5d-4f6f-9085-39f213ece2b1/8d82a0f6-e9a7-4302-84d7-66c4c4c06eb3.jpg
 
         const isCurrentlyBookmarked = isBookmarked(id);
         const canSave = canAddMore() || isCurrentlyBookmarked;
