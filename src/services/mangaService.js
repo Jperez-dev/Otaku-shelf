@@ -11,9 +11,19 @@ export function getCoverUrl(manga) {
     console.warn('No cover filename found for manga:', mangaId);
   }
   
-  return fileName
-    ? `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`
-    : getFallbackCoverUrl();
+  if (!fileName) {
+    return getFallbackCoverUrl();
+  }
+  
+  // Use proxy path in production to avoid referrer policy issues
+  const isDevelopment = import.meta.env.DEV;
+  if (isDevelopment) {
+    // In development, try direct URL with referrer policy
+    return `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`;
+  } else {
+    // In production, use Vercel proxy to bypass referrer restrictions
+    return `/covers/${mangaId}/${fileName}.256.jpg`;
+  }
 }
 
 // Generate a fallback placeholder URL for failed cover images
