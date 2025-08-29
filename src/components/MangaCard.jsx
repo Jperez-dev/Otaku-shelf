@@ -43,7 +43,7 @@ export default function MangaCard({ mangaList }) {
         );
         const fileName = coverRel?.attributes?.fileName;
         const imageUrl = fileName
-          ? `https://uploads.mangadex.org/covers/${id}/${fileName}.512.jpg`
+          ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
           : "";
         console.log(imageUrl);
 
