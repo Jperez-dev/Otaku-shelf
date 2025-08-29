@@ -49,7 +49,7 @@ function PopularList({ mangaList }) {
         );
         const fileName = coverRel?.attributes?.fileName;
         const imageUrl = fileName
-          ? `https://uploads.mangadx.org/covers/${id}/${fileName}`
+          ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
           : "";
 
         const authorName =
