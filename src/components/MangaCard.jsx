@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useBookmarks } from "../context/BookmarksContext";
+import { getCoverUrl, getMangaTitle, getFallbackCoverUrl, getFallbackCoverUrlWithTitle } from "../services/mangaService";
 
 export default function MangaCard({ mangaList }) {
   const {
@@ -35,18 +36,10 @@ export default function MangaCard({ mangaList }) {
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 2xl:grid-cols-6">
       {mangaList.map((manga) => {
-        const title =
-          manga.attributes.title.en || Object.values(manga.attributes.title)[0];
+        const title = getMangaTitle(manga);
         const id = manga.id;
-        const coverRel = manga.relationships.find(
-          (rel) => rel.type === "cover_art"
-        );
-        const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName
-          ? `https://uploads.mangadex.org/covers/${id}/${fileName}.256.jpg`
-          : "";
-        console.log(imageUrl);
-        //https://uploads.mangadex.org/covers/55f1779c-3b5d-4f6f-9085-39f213ece2b1/8d82a0f6-e9a7-4302-84d7-66c4c4c06eb3.jpg
+        const imageUrl = getCoverUrl(manga);
+        console.log('Cover URL for', title, ':', imageUrl);
 
         const isCurrentlyBookmarked = isBookmarked(id);
         const canSave = canAddMore() || isCurrentlyBookmarked;
@@ -62,7 +55,23 @@ export default function MangaCard({ mangaList }) {
                   src={imageUrl}
                   alt={title}
                   crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    console.warn('Cover image failed to load for manga:', title, 'URL:', e.target.src);
+                    // Prevent infinite loops by checking if we're already showing a fallback
+                    if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
+                      // First try placehold.co service
+                      e.target.src = getFallbackCoverUrlWithTitle(title);
+                    } else if (e.target.src.includes('placehold.co')) {
+                      // If external service fails, use inline SVG (guaranteed to work)
+                      e.target.src = getFallbackCoverUrl();
+                    }
+                    // If already using inline SVG, do nothing to prevent infinite loop
+                  }}
+                  onLoad={() => {
+                    console.log('Cover image loaded successfully for:', title);
+                  }}
                 />
 
                 {/* Bookmark Button */}

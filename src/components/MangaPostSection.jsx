@@ -5,6 +5,7 @@ import MangaCard from "./MangaCard";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useBookmarks } from "../context/BookmarksContext";
+import { getCoverUrl, getMangaTitle, getFallbackCoverUrl, getFallbackCoverUrlWithTitle } from "../services/mangaService";
 
 // Popular List Component for Home Page
 function PopularList({ mangaList }) {
@@ -40,30 +41,20 @@ function PopularList({ mangaList }) {
 
   return (
     <div className="space-y-4">
-      {mangaList?.map((manga, index) => {
+      {mangaList.map((manga, index) => {
         // Safety check for manga data
         if (!manga || !manga.attributes || !manga.relationships) {
           return null;
         }
-        const title =
-          manga.attributes?.title?.en || 
-          (manga.attributes?.title && Object.values(manga.attributes.title)[0]) ||
-          "Untitled";
+
+        const title = getMangaTitle(manga);
         const id = manga.id;
-        const coverRel = manga.relationships.find(
-          (rel) => rel.type === "cover_art"
-        );
-        const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName
-          ? `https://uploads.mangadex.org/covers/${id}/${fileName}.256.jpg`
-          : "";
+        const imageUrl = getCoverUrl(manga);
 
-        const authorRel = manga.relationships?.find(
-          (rel) => rel.type === "author"
-        );
-        const authorName = authorRel?.attributes?.name || "Unknown Author";
+        const authorName =
+          manga.relationships[0].attributes.name || "No Author";
 
-        const followerCount = manga.stats?.follows || 0;
+        const followerCount = manga.stats?.follows || "failed to load";
 
         const isCurrentlyBookmarked = isBookmarked(id);
         const canSave = canAddMore() || isCurrentlyBookmarked;
@@ -86,7 +77,24 @@ function PopularList({ mangaList }) {
               <img
                 src={imageUrl}
                 alt={title}
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.warn('Cover image failed to load for manga:', title, 'URL:', e.target.src);
+                  // Prevent infinite loops by checking if we're already showing a fallback
+                  if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
+                    // First try placehold.co service
+                    e.target.src = getFallbackCoverUrlWithTitle(title);
+                  } else if (e.target.src.includes('placehold.co')) {
+                    // If external service fails, use inline SVG (guaranteed to work)
+                    e.target.src = getFallbackCoverUrl();
+                  }
+                  // If already using inline SVG, do nothing to prevent infinite loop
+                }}
+                onLoad={() => {
+                  console.log('Cover image loaded successfully for:', title);
+                }}
               />
             </Link>
 
@@ -143,7 +151,6 @@ export default function MangaPostSection({ section }) {
     const fetchManga = async () => {
       try {
         let mangaData;
-
         if (section === "popular") {
           // Popular list + batch statistics with better error handling
           try {
@@ -151,7 +158,6 @@ export default function MangaPostSection({ section }) {
               "/manga?limit=20&order[followedCount]=desc&includes[]=cover_art&includes[]=author"
             );
             const mangaDataRaw = popularRes.data?.data || [];
-            
             if (mangaDataRaw.length === 0) {
               mangaData = [];
             } else {
@@ -163,7 +169,6 @@ export default function MangaPostSection({ section }) {
                 const params = ids.map((id) => `manga[]=${id}`).join("&");
                 const statsRes = await apiManga.get(`/statistics/manga?${params}`);
                 console.log('MangaPostSection: Stats response:', statsRes.data);
-                
                 if (statsRes.data && statsRes.data.statistics) {
                   statsMap = statsRes.data.statistics;
                   console.log('MangaPostSection: Stats map keys:', Object.keys(statsMap));
@@ -175,7 +180,6 @@ export default function MangaPostSection({ section }) {
                 console.warn('MangaPostSection: Failed to fetch statistics, continuing without stats:', statsError);
                 statsMap = {};
               }
-              
               mangaData = mangaDataRaw.map((m) => {
                 const stats = statsMap && typeof statsMap === 'object' ? (statsMap[m.id] || {}) : {};
                 console.log(`MangaPostSection: Stats for ${m.id}:`, stats);
@@ -221,14 +225,12 @@ export default function MangaPostSection({ section }) {
             setLoading(false);
             return;
           }
-
           const idsParams = stored.map((id) => `ids[]=${id}`).join("&");
           const res = await apiManga.get(
             `/manga?${idsParams}&includes[]=cover_art&includes[]=author`
           );
           mangaData = res.data?.data?.slice(0, 10) || []; // Limit to 10 for home page
         }
-
         setMangaList(mangaData);
       } catch (error) {
         if (error.response?.status === 403) {
@@ -246,7 +248,6 @@ export default function MangaPostSection({ section }) {
         setLoading(false);
       }
     };
-
     fetchManga();
   }, [section]);
 
@@ -365,7 +366,6 @@ export default function MangaPostSection({ section }) {
             </div>
             <div className="w-20 h-8 bg-gray-600 rounded-lg animate-pulse"></div>
           </div>
-
           {/* Loading grid */}
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-4 2xl:grid-cols-6">
             {Array(9)
@@ -418,7 +418,6 @@ export default function MangaPostSection({ section }) {
             View All →
           </button>
         </div>
-
         {/* Popular manga container with gradient background */}
         <div className="bg-gradient-to-b from-[#ab0086] via-[#4f0094] to-[#120918] rounded-lg p-6 relative overflow-hidden md:p-2">
           <PopularList mangaList={mangaList} />
@@ -460,7 +459,6 @@ export default function MangaPostSection({ section }) {
             View All →
           </button>
         </div>
-
         <MangaCard mangaList={mangaList} />
       </div>
     </section>

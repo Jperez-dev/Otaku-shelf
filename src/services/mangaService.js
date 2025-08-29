@@ -5,9 +5,28 @@ export function getCoverUrl(manga) {
   const mangaId = manga.id;
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
+  
+  // Debug logging for deployment issues
+  if (!fileName) {
+    console.warn('No cover filename found for manga:', mangaId);
+  }
+  
   return fileName
     ? `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`
-    : "";
+    : getFallbackCoverUrl();
+}
+
+// Generate a fallback placeholder URL for failed cover images
+export function getFallbackCoverUrl(title = "No Cover") {
+  // Use a base64 encoded 1x1 pixel image as the ultimate fallback
+  // This ensures we never have network requests that can fail
+  return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjM4NCIgdmlld0JveD0iMCAwIDI1NiAzODQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyNTYiIGhlaWdodD0iMzg0IiBmaWxsPSIjMmEyYTRlIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjYzc3ZGZmIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiPk5vIENvdmVyPC90ZXh0Pgo8L3N2Zz4K";
+}
+
+// Generate a fallback placeholder with title (tries external service first, then inline SVG)
+export function getFallbackCoverUrlWithTitle(title = "No Cover") {
+  const encodedTitle = encodeURIComponent(title.slice(0, 20));
+  return `https://placehold.co/256x384/2a2a4e/c77dff/png?text=${encodedTitle}`;
 }
 
 // Extract first available title
@@ -21,40 +40,16 @@ export function getMangaTitle(manga) {
 
 // Batch statistics for many manga ids
 export async function fetchStatisticsBatch(mangaIds) {
-  if (!mangaIds || mangaIds.length === 0) {
-    console.log('fetchStatisticsBatch: No manga IDs provided');
-    return {};
-  }
+  if (!mangaIds || mangaIds.length === 0) return {};
   
   try {
     const params = mangaIds
       .map((id) => `manga[]=${encodeURIComponent(id)}`)
       .join("&");
-    console.log('fetchStatisticsBatch: Making request with params:', params);
     const res = await apiManga.get(`/statistics/manga?${params}`);
-    
-    console.log('fetchStatisticsBatch: Response received:', res.data);
-    
-    // Add defensive checks for the response structure
-    if (!res.data) {
-      console.warn('fetchStatisticsBatch: No response data');
-      return {};
-    }
-    
-    if (!res.data.statistics) {
-      console.warn('fetchStatisticsBatch: No statistics in response:', res.data);
-      return {};
-    }
-    
-    console.log('fetchStatisticsBatch: Statistics found:', Object.keys(res.data.statistics).length, 'entries');
-    return res.data.statistics || {};
+    return res.data?.statistics || {};
   } catch (error) {
-    console.error('fetchStatisticsBatch: Failed to fetch statistics batch:', error);
-    console.error('fetchStatisticsBatch: Error details:', {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data
-    });
+    console.error('Failed to fetch statistics batch:', error);
     return {};
   }
 }

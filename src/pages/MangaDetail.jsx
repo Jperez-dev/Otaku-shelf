@@ -16,6 +16,8 @@ import {
   fetchRelatedByAuthor,
   getCoverUrl,
   getMangaTitle,
+  getFallbackCoverUrl,
+  getFallbackCoverUrlWithTitle,
 } from "../services/mangaService";
 import { useBookmarks } from "../context/BookmarksContext";
 
@@ -137,7 +139,20 @@ export default function MangaDetailPage() {
                     src={coverImage}
                     alt={title}
                     crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
                     className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      console.warn('Main cover image failed to load for:', title);
+                      // Prevent infinite loops by checking if we're already showing a fallback
+                      if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
+                        // First try placehold.co service
+                        e.target.src = getFallbackCoverUrlWithTitle(title);
+                      } else if (e.target.src.includes('placehold.co')) {
+                        // If external service fails, use inline SVG (guaranteed to work)
+                        e.target.src = getFallbackCoverUrl();
+                      }
+                      // If already using inline SVG, do nothing to prevent infinite loop
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
                 </div>
@@ -534,7 +549,21 @@ export default function MangaDetailPage() {
                     <img
                       src={img}
                       alt={title}
+                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.warn('Related manga cover failed to load for:', title);
+                        // Prevent infinite loops by checking if we're already showing a fallback
+                        if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
+                          // First try placehold.co service
+                          e.target.src = getFallbackCoverUrlWithTitle(title);
+                        } else if (e.target.src.includes('placehold.co')) {
+                          // If external service fails, use inline SVG (guaranteed to work)
+                          e.target.src = getFallbackCoverUrl();
+                        }
+                        // If already using inline SVG, do nothing to prevent infinite loop
+                      }}
                     />
                   </div>
                   <h4 className="text-white text-sm font-semibold truncate group-hover:text-[#c77dff] transition-colors duration-300">
