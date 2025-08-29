@@ -5,6 +5,7 @@ import MangaCard from "./MangaCard";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useBookmarks } from "../context/BookmarksContext";
+import { getCoverUrl, getMangaTitle } from "../services/mangaService";
 
 // Popular List Component for Home Page
 function PopularList({ mangaList }) {
@@ -41,16 +42,9 @@ function PopularList({ mangaList }) {
   return (
     <div className="space-y-4">
       {mangaList.map((manga, index) => {
-        const title =
-          manga.attributes.title.en || Object.values(manga.attributes.title)[0];
+        const title = getMangaTitle(manga);
         const id = manga.id;
-        const coverRel = manga.relationships.find(
-          (rel) => rel.type === "cover_art"
-        );
-        const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName
-          ? `https://uploads.mangadex.org/covers/${id}/${fileName}.256.jpg`
-          : "";
+        const imageUrl = getCoverUrl(manga);
 
         const authorName =
           manga.relationships[0].attributes.name || "No Author";

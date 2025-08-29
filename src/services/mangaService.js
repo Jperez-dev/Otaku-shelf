@@ -5,9 +5,15 @@ export function getCoverUrl(manga) {
   const mangaId = manga.id;
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
+  
+  // Debug logging to help diagnose cover issues
+  if (!fileName) {
+    console.warn('No cover filename found for manga:', mangaId, 'relationships:', manga.relationships);
+  }
+  
   return fileName
     ? `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`
-    : "";
+    : "https://via.placeholder.com/256x384/2a2a4e/c77dff?text=No+Cover";
 }
 
 // Extract first available title
