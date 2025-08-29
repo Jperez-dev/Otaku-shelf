@@ -19,27 +19,6 @@ export function getMangaTitle(manga) {
   );
 }
 
-// Add retry logic for failed requests
-const retryRequest = async (requestFn, maxRetries = 3, delay = 1000) => {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await requestFn();
-    } catch (error) {
-      if (i === maxRetries - 1) throw error;
-
-      // Don't retry on 404 or 403
-      if (error.response?.status === 404 || error.response?.status === 403) {
-        throw error;
-      }
-
-      // Wait before retry, with exponential backoff
-      await new Promise((resolve) =>
-        setTimeout(resolve, delay * Math.pow(2, i))
-      );
-    }
-  }
-};
-
 // Batch statistics for many manga ids
 export async function fetchStatisticsBatch(mangaIds) {
   if (!mangaIds || mangaIds.length === 0) return {};
