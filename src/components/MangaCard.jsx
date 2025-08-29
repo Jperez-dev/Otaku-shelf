@@ -32,7 +32,6 @@ export default function MangaCard({ mangaList }) {
   const bookmarkCount = getBookmarkCount();
   const maxBookmarks = getMaxBookmarks();
 
-  // Professional styling for all manga sections
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 2xl:grid-cols-6">
       {mangaList.map((manga) => {
@@ -43,7 +42,9 @@ export default function MangaCard({ mangaList }) {
           (rel) => rel.type === "cover_art"
         );
         const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName ? `/covers/${id}/${fileName}` : "";
+        const imageUrl = fileName
+          ? `https://uploads.mangadx.org/covers/${id}/${fileName}`
+          : "";
 
         const isCurrentlyBookmarked = isBookmarked(id);
         const canSave = canAddMore() || isCurrentlyBookmarked;

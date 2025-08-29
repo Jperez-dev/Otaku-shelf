@@ -5,7 +5,9 @@ export function getCoverUrl(manga) {
   const mangaId = manga.id;
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
-  return fileName ? `/covers/${mangaId}/${fileName}.512.jpg` : "";
+  return fileName
+    ? `https://uploads.mangadx.org/covers/${mangaId}/${fileName}.512.jpg`
+    : "";
 }
 
 // Extract first available title

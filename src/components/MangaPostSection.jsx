@@ -48,7 +48,9 @@ function PopularList({ mangaList }) {
           (rel) => rel.type === "cover_art"
         );
         const fileName = coverRel?.attributes?.fileName;
-        const imageUrl = fileName ? `/covers/${id}/${fileName}` : "";
+        const imageUrl = fileName
+          ? `https://uploads.mangadx.org/covers/${id}/${fileName}`
+          : "";
 
         const authorName =
           manga.relationships[0].attributes.name || "No Author";
@@ -349,7 +351,6 @@ export default function MangaPostSection({ section }) {
 
   if (mangaList.length === 0) return null;
 
-  // Special styling for popular section (keep original)
   if (section === "popular") {
     return (
       <section className="my-32 md:my-0 md:col-span-4 md:p-4 md:bg-gradient-to-b from-gray-800 to-[#120918] md:rounded-tl-lg md:rounded-bl-lg custom-breakpoint-3">
@@ -387,13 +388,12 @@ export default function MangaPostSection({ section }) {
     );
   }
 
-  // Professional styling for other sections
   const config = getSectionConfig(section);
 
   return (
     <section className="my-12 md:col-span-3">
       <div className="bg-[#1a1a2e] rounded-2xl p-4 sm:p-6 border border-[#2a2a4e] shadow-xl">
-        {/* Professional Header */}
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <div
@@ -422,7 +422,6 @@ export default function MangaPostSection({ section }) {
           </button>
         </div>
 
-        {/* Enhanced Manga Grid */}
         <MangaCard mangaList={mangaList} />
       </div>
     </section>

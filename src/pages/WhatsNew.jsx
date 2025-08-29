@@ -11,7 +11,7 @@ export default function WhatsNew() {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    
+
     const fetchLatestManga = async () => {
       try {
         // First, get popular manga (same as home page "what's new" section)
@@ -23,10 +23,18 @@ export default function WhatsNew() {
         // Filter for recent updates (last 14 days)
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - 14);
-        
+
         const recentManga = popularManga
-          .filter((m) => new Date(m.attributes?.updatedAt || m.attributes?.createdAt) >= cutoff)
-          .sort((a, b) => new Date(b.attributes.updatedAt) - new Date(a.attributes.updatedAt));
+          .filter(
+            (m) =>
+              new Date(m.attributes?.updatedAt || m.attributes?.createdAt) >=
+              cutoff
+          )
+          .sort(
+            (a, b) =>
+              new Date(b.attributes.updatedAt) -
+              new Date(a.attributes.updatedAt)
+          );
 
         // For pagination, get more manga based on latest updates
         if (page > 0) {
@@ -35,7 +43,7 @@ export default function WhatsNew() {
             `/manga?limit=${pageSize}&offset=${offset}&order[updatedAt]=desc&includes[]=cover_art&includes[]=author`
           );
           const latestManga = latestRes.data.data;
-          
+
           // Combine recent popular with latest updates
           const combinedList = page === 0 ? recentManga : latestManga;
           if (isMounted) setMangaList(combinedList);
@@ -59,7 +67,9 @@ export default function WhatsNew() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold text-[var(--color-text)] mb-4">Latest Updates</h2>
+      <h2 className="text-2xl font-bold text-[var(--color-text)] mb-4">
+        Latest Updates
+      </h2>
       {loading ? (
         <div className="text-center text-gray-400">Loading...</div>
       ) : (

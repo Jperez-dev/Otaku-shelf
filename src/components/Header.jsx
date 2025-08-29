@@ -119,7 +119,10 @@ export default function Header({ isDark, toggleDarkMode }) {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Search Icon for Mobile */}
-            <button onClick={handleSearchSubmit} className="lg:hidden p-2 text-[#f2e9ff] hover:text-[#c77dff] transition-colors duration-300">
+            <button
+              onClick={handleSearchSubmit}
+              className="lg:hidden p-2 text-[#f2e9ff] hover:text-[#c77dff] transition-colors duration-300"
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -172,7 +175,7 @@ export default function Header({ isDark, toggleDarkMode }) {
             </button>
 
             {/* Mobile Menu Button */}
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-[#f2e9ff] hover:text-[#c77dff] transition-colors duration-300"
             >

@@ -28,7 +28,7 @@ export default function Hero() {
         } else {
           toast.error("❌ Something went wrong while fetching manga.");
         }
-        console.log("API error:", error);
+        // console.log("API error:", error);
       }
     };
 
