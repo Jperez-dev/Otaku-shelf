@@ -6,7 +6,7 @@ export function getCoverUrl(manga) {
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
   return fileName
-    ? `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.512.jpg`
+    ? `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`
     : "";
 }
 
