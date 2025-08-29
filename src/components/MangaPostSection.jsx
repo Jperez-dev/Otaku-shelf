@@ -78,6 +78,7 @@ function PopularList({ mangaList }) {
               <img
                 src={imageUrl}
                 alt={title}
+                crossOrigin="anonymous"
                 className="w-full h-full object-cover"
               />
             </Link>
