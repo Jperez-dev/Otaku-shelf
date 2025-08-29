@@ -43,7 +43,7 @@ export default function MangaCard({ mangaList }) {
         );
         const fileName = coverRel?.attributes?.fileName;
         const imageUrl = fileName
-          ? `	https://uploads.mangadex.org/covers/e78a489b-6632-…/ef116a40-28d4-4b7b-b4b8-b71af237ebfd.jpg.512.jpg`
+          ? `https://uploads.mangadex.org/covers/${id}/${fileName}.512.jpg`
           : "";
         console.log(imageUrl);
         //https://uploads.mangadex.org/covers/55f1779c-3b5d-4f6f-9085-39f213ece2b1/8d82a0f6-e9a7-4302-84d7-66c4c4c06eb3.jpg
@@ -59,7 +59,7 @@ export default function MangaCard({ mangaList }) {
             <Link to={`/manga/${id}`} className="block">
               <div className="aspect-[2/3] rounded-lg mb-2 overflow-hidden relative">
                 <img
-                  src={imageUrl}
+                  src="https://uploads.mangadex.org/covers/e78a489b-6632-…/ef116a40-28d4-4b7b-b4b8-b71af237ebfd.jpg.512.jpg"
                   alt={title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
