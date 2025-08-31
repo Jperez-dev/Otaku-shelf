@@ -172,7 +172,7 @@ export async function fetchChapters({
 }) {
   const orderKey = orderBy === "readableAt" ? "readableAt" : "chapter";
   const buildUrl = (langParams) =>
-    `/chapter?manga=${mangaId}&limit=${limit}&offset=${offset}${langParams}&order[${orderKey}]=desc`;
+    `/chapter?manga=${mangaId}&limit=${limit * 2}&offset=${offset}${langParams}&order[${orderKey}]=desc`; // Back to descending order
   const langQuery = (arr) =>
     arr.map((l) => `&translatedLanguage[]=${encodeURIComponent(l)}`).join("");
 
@@ -180,13 +180,63 @@ export async function fetchChapters({
   let res = await apiManga.get(buildUrl(langQuery(languages)));
   let data = res.data?.data || [];
   const total = res.data?.total ?? data.length;
-  if (data.length > 0 || !allowFallbackAnyLanguage)
-    return { list: data, total };
+  
+  // Remove duplicates by chapter number (keep first occurrence, prefer English)
+  const uniqueChapters = new Map();
+  data.forEach((chapter) => {
+    const chapterNum = chapter.attributes?.chapter;
+    if (chapterNum) {
+      const existingChapter = uniqueChapters.get(chapterNum);
+      const isEnglish = chapter.attributes?.translatedLanguage?.toLowerCase() === 'en';
+      const existingIsEnglish = existingChapter?.attributes?.translatedLanguage?.toLowerCase() === 'en';
+      
+      // Keep this chapter if:
+      // 1. No existing chapter with this number, OR
+      // 2. This is English and existing is not, OR
+      // 3. Both same language preference but this is newer
+      if (!existingChapter || 
+          (isEnglish && !existingIsEnglish) ||
+          (isEnglish === existingIsEnglish && 
+           new Date(chapter.attributes?.readableAt || 0) > new Date(existingChapter.attributes?.readableAt || 0))) {
+        uniqueChapters.set(chapterNum, chapter);
+      }
+    }
+  });
+  
+  // Convert back to array and sort by chapter number (descending - latest first)
+  const filteredData = Array.from(uniqueChapters.values())
+    .sort((a, b) => {
+      const chapterA = parseFloat(a.attributes?.chapter || 0);
+      const chapterB = parseFloat(b.attributes?.chapter || 0);
+      return chapterB - chapterA; // Descending order
+    })
+    .slice(0, limit); // Apply original limit after deduplication
 
-  // Optional fallback: any language
+  if (filteredData.length > 0 || !allowFallbackAnyLanguage)
+    return { list: filteredData, total };
+
+  // Optional fallback: any language with same deduplication logic
   res = await apiManga.get(buildUrl(""));
   data = res.data?.data || [];
-  return { list: data, total: res.data?.total ?? data.length };
+  
+  // Apply same deduplication for fallback
+  const fallbackUniqueChapters = new Map();
+  data.forEach((chapter) => {
+    const chapterNum = chapter.attributes?.chapter;
+    if (chapterNum && !fallbackUniqueChapters.has(chapterNum)) {
+      fallbackUniqueChapters.set(chapterNum, chapter);
+    }
+  });
+  
+  const fallbackFilteredData = Array.from(fallbackUniqueChapters.values())
+    .sort((a, b) => {
+      const chapterA = parseFloat(a.attributes?.chapter || 0);
+      const chapterB = parseFloat(b.attributes?.chapter || 0);
+      return chapterB - chapterA; // Descending order
+    })
+    .slice(0, limit);
+  
+  return { list: fallbackFilteredData, total: res.data?.total ?? fallbackFilteredData.length };
 }
 
 export async function fetchRelatedByAuthor({ authorId, excludeId, limit = 6 }) {

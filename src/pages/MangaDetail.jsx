@@ -59,7 +59,7 @@ export default function MangaDetailPage() {
         if (!isMounted) return;
         setManga(manga);
         setStats(stats);
-        // Fetch chapters with EN preference, with pagination and proper ordering by chapter
+        // Fetch chapters with EN preference, with pagination and proper ordering by chapter (descending - latest first)
         const { list: firstBatch } = await fetchChapters({
           mangaId: id,
           limit: pageSize,
@@ -466,6 +466,8 @@ export default function MangaDetailPage() {
                     const chapterLanguage =
                       chapter.attributes?.translatedLanguage?.toLowerCase();
                     const isEnglish = chapterLanguage === "en";
+                    const chapterNumber = chapter.attributes?.chapter;
+                    const chapterTitle = chapter.attributes?.title;
 
                     return (
                       <div
@@ -475,19 +477,19 @@ export default function MangaDetailPage() {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <div className="w-8 h-8 bg-[#c77dff] rounded-full flex items-center justify-center">
+                            <div className="w-10 h-10 bg-[#c77dff] rounded-full flex items-center justify-center">
                               <span className="text-white font-bold text-sm">
-                                {chapter.attributes?.chapter || "-"}
+                                {chapterNumber || "?"}
                               </span>
                             </div>
-                            <div>
+                            <div className="flex-1">
                               <h4 className="text-white font-semibold group-hover:text-[#c77dff] transition-colors duration-300">
-                                {chapter.attributes?.title ||
-                                  `Chapter ${
-                                    chapter.attributes?.chapter || ""
-                                  }`}
+                                {chapterTitle ? 
+                                  `Chapter ${chapterNumber || ""}: ${chapterTitle}` : 
+                                  `Chapter ${chapterNumber || "Unknown"}`
+                                }
                               </h4>
-                              <div className="flex items-center space-x-2 mt-1">
+                              <div className="flex items-center space-x-3 mt-1">
                                 <p className="text-gray-400 text-sm">
                                   {new Date(
                                     chapter.attributes?.readableAt ||
@@ -496,19 +498,26 @@ export default function MangaDetailPage() {
                                   ).toLocaleDateString()}
                                 </p>
                                 <span
-                                  className={`text-xs px-2 py-1 rounded-full ${
+                                  className={`text-xs px-2 py-1 rounded-full font-medium ${
                                     isEnglish
-                                      ? "bg-green-500 text-white"
-                                      : "bg-yellow-500 text-black"
+                                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                                      : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
                                   }`}
                                 >
                                   {chapterLanguage?.toUpperCase() || "Unknown"}
                                 </span>
+                                {chapterNumber && (
+                                  <span className="text-xs text-gray-500">
+                                    #{parseFloat(chapterNumber).toFixed(chapterNumber % 1 === 0 ? 0 : 1)}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
-                          <div className="text-gray-400 text-sm">
-                            ID: {chapter.id.slice(0, 6)}…
+                          <div className="text-gray-500">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
                           </div>
                         </div>
                       </div>
