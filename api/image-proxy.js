@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     // Validate the URL is from MangaDX
-    if (!url.includes('uploads.mangadx.org') && !url.includes('uploads.mangadex.org')) {
+    if (!url.includes('uploads.mangadex.org')) {
       return res.status(400).json({ error: 'Only MangaDX images are allowed' });
     }
 

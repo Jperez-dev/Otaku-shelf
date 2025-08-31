@@ -7,7 +7,19 @@
   "rewrites": [
     {
       "source": "/api/manga/:path*",
-      "destination": "https://api.mangadex.org/:path*"
+      "destination": "https://api.mangadex.org/manga/:path*"
+    },
+    {
+      "source": "/api/statistics/:path*",
+      "destination": "https://api.mangadex.org/statistics/:path*"
+    },
+    {
+      "source": "/api/chapter/:path*",
+      "destination": "https://api.mangadex.org/chapter/:path*"
+    },
+    {
+      "source": "/api/at-home/:path*",
+      "destination": "https://api.mangadex.org/at-home/:path*"
     },
     {
       "source": "/covers/:mangaId/:filename*",
