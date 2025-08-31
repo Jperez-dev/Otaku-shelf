@@ -22,10 +22,27 @@ export default async function handler(req, res) {
     // Build query string from remaining parameters
     const queryParams = { ...req.query };
     delete queryParams.id; // Remove id from query params since it's in the path
-    const queryString = new URLSearchParams(queryParams).toString();
     
-    const mangaDxUrl = `https://api.mangadex.org/manga/${id}${queryString ? '?' + queryString : ''}`;
+    const queryString = new URLSearchParams();
+    
+    // Handle array parameters properly for MangaDX API
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (Array.isArray(value)) {
+        // Handle array parameters like includes[]
+        value.forEach(item => {
+          queryString.append(key, item);
+        });
+      } else {
+        queryString.append(key, value);
+      }
+    }
+    
+    const queryStringStr = queryString.toString();
+    
+    const mangaDxUrl = `https://api.mangadx.org/manga/${id}${queryStringStr ? '?' + queryStringStr : ''}`;
 
+    console.log('Manga API request query:', req.query);
+    console.log('Manga API query string:', queryStringStr);
     console.log('Proxying manga detail request to:', mangaDxUrl);
 
     // Fetch from MangaDX API

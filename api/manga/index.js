@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     
     for (const [key, value] of Object.entries(req.query)) {
       if (Array.isArray(value)) {
-        // Handle array parameters like ids[] or includes[]
+        // Handle array parameters like authors[], includes[], etc.
         value.forEach(item => {
           params.append(key, item);
         });
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     }
     
     const queryString = params.toString();
-    const mangaDxUrl = `https://api.mangadex.org/manga${queryString ? '?' + queryString : ''}`;
+    const mangaDxUrl = `https://api.mangadx.org/manga${queryString ? '?' + queryString : ''}`;
 
     console.log('Manga API request query:', req.query);
     console.log('Manga API query string:', queryString);
