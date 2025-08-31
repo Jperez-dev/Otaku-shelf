@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     }
     
     const queryString = params.toString();
-    const mangaDxUrl = `https://api.mangadx.org/manga${queryString ? '?' + queryString : ''}`;
+    const mangaDxUrl = `https://api.mangadex.org/manga${queryString ? '?' + queryString : ''}`;
 
     console.log('Manga API request query:', req.query);
     console.log('Manga API query string:', queryString);
@@ -49,9 +49,18 @@ export default async function handler(req, res) {
     });
 
     if (!response.ok) {
-      console.error('MangaDX API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('MangaDX API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: mangaDxUrl,
+        requestQuery: req.query,
+        queryString: queryString,
+        errorBody: errorText
+      });
       return res.status(response.status).json({ 
-        error: `MangaDX API error: ${response.status} ${response.statusText}` 
+        error: `MangaDX API error: ${response.status} ${response.statusText}`,
+        details: errorText
       });
     }
 
@@ -63,7 +72,15 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
 
   } catch (error) {
-    console.error('Manga API proxy error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Manga API proxy error:', {
+      error: error.message,
+      stack: error.stack,
+      requestQuery: req.query,
+      url: req.url
+    });
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message
+    });
   }
 }
