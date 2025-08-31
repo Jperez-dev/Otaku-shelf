@@ -17,7 +17,7 @@ export function getCoverUrl(manga) {
     return getFallbackCoverUrl();
   }
   
-  const originalImageUrl = `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`;
+  const originalImageUrl = `https://uploads.mangadex.org/covers/${mangaId}/${fileName}`;
   
   // In development, try direct URL first, in production use Vercel function
   const isDevelopment = import.meta.env.DEV;
