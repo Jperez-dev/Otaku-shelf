@@ -2,25 +2,30 @@
   "functions": {
     "api/image-proxy.js": {
       "maxDuration": 30
+    },
+    "api/manga/index.js": {
+      "maxDuration": 30
+    },
+    "api/manga/[id].js": {
+      "maxDuration": 30
+    },
+    "api/statistics/manga/index.js": {
+      "maxDuration": 30
+    },
+    "api/statistics/manga/[id].js": {
+      "maxDuration": 30
+    },
+    "api/chapter/index.js": {
+      "maxDuration": 30
+    },
+    "api/chapter/[id].js": {
+      "maxDuration": 30
+    },
+    "api/at-home/server/[id].js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
-    {
-      "source": "/api/manga/:path*",
-      "destination": "https://api.mangadex.org/manga/:path*"
-    },
-    {
-      "source": "/api/statistics/:path*",
-      "destination": "https://api.mangadex.org/statistics/:path*"
-    },
-    {
-      "source": "/api/chapter/:path*",
-      "destination": "https://api.mangadex.org/chapter/:path*"
-    },
-    {
-      "source": "/api/at-home/:path*",
-      "destination": "https://api.mangadex.org/at-home/:path*"
-    },
     {
       "source": "/covers/:mangaId/:filename*",
       "destination": "https://uploads.mangadex.org/covers/:mangaId/:filename*"
