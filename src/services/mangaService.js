@@ -10,7 +10,7 @@ export function getCoverUrl(manga) {
   const mangaId = manga.id;
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
-  // console.log(`Hello ${fileName}`)
+  console.log(`Hello ${mangaId} and ${fileName}`)
   
   // Debug logging for deployment issues
   if (!fileName) {
