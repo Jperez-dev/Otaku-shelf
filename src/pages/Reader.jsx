@@ -58,7 +58,7 @@ export default function Reader() {
           }
         }
       } catch (err) {
-        console.error("Error loading chapter:", err);
+        // Error loading chapter
         if (isMounted) {
           // Check if it's a network/CORS error
           if (err.message.includes('Failed to fetch') || err.name === 'AxiosError') {
@@ -244,7 +244,7 @@ export default function Reader() {
               className="w-full h-auto rounded-lg shadow-lg"
               loading={idx < 3 ? "eager" : "lazy"}
               onError={(e) => {
-                console.error(`Failed to load image: ${src}`);
+                // Failed to load image
                 e.target.style.display = "none";
               }}
             />

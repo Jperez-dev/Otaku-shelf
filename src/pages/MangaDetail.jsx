@@ -144,7 +144,7 @@ export default function MangaDetailPage() {
                     referrerPolicy="no-referrer"
                     className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
-                      console.warn('Main cover image failed to load for:', title);
+                      // Main cover image failed to load
                       // Prevent infinite loops by checking if we're already showing a fallback
                       if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
                         // First try placehold.co service
@@ -555,7 +555,7 @@ export default function MangaDetailPage() {
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        console.warn('Related manga cover failed to load for:', title);
+                        // Related manga cover failed to load
                         // Prevent infinite loops by checking if we're already showing a fallback
                         if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
                           // First try placehold.co service

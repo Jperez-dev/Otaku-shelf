@@ -3,7 +3,7 @@ import { apiManga } from "../utils/axiosConfig";
 // Build cover image URL from a manga object with relationships
 export function getCoverUrl(manga) {
   if (!manga || !manga.id) {
-    console.warn('getCoverUrl: Invalid manga object:', manga);
+    // Invalid manga object
     return getFallbackCoverUrl();
   }
   
@@ -11,9 +11,8 @@ export function getCoverUrl(manga) {
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
   
-  // Debug logging for deployment issues
   if (!fileName) {
-    console.warn('No cover filename found for manga:', mangaId);
+    // No cover filename found
     return getFallbackCoverUrl();
   }
   
@@ -61,15 +60,14 @@ export async function fetchStatisticsBatch(mangaIds) {
     const params = mangaIds
       .map((id) => `manga[]=${encodeURIComponent(id)}`)
       .join("&");
-    console.log('fetchStatisticsBatch: Requesting stats for', mangaIds.length, 'manga');
-    console.log('fetchStatisticsBatch: Request params:', params);
+    // Requesting stats for manga batch
     
     const res = await apiManga.get(`/statistics/manga?${params}`);
-    console.log('fetchStatisticsBatch: Response:', res.data);
+    // Stats response received
     
     return res.data?.statistics || {};
   } catch (error) {
-    console.error('Failed to fetch statistics batch:', error);
+    // Failed to fetch statistics batch
     // Return empty stats for each manga ID to avoid undefined errors
     const emptyStats = {};
     mangaIds.forEach(id => {
@@ -94,7 +92,7 @@ export async function fetchPopular(limit = 20, offset = 0) {
     const stats = await fetchStatisticsBatch(ids);
     return list.map((m) => ({ ...m, stats: stats[m.id] || {} }));
   } catch (error) {
-    console.error('Failed to fetch popular manga:', error);
+    // Failed to fetch popular manga
     return [];
   }
 }
@@ -153,13 +151,13 @@ export async function fetchMangaDetail(id) {
       const statsRes = await apiManga.get(`/statistics/manga/${id}`);
       stats = statsRes.data?.statistics?.[id] || {};
     } catch (statsError) {
-      console.warn('Failed to fetch statistics for manga:', id, statsError);
+      // Failed to fetch statistics for manga
       stats = {};
     }
     
     return { manga, stats };
   } catch (error) {
-    console.error('Failed to fetch manga detail:', error);
+    // Failed to fetch manga detail
     throw error;
   }
 }

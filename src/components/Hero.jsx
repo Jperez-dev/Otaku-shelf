@@ -46,7 +46,7 @@ export default function Hero() {
         } else {
           toast.error("❌ Something went wrong while fetching manga.");
         }
-        console.log("API error:", error);
+        // console.log("API error:", error);
       }
     };
 
@@ -102,7 +102,7 @@ export default function Hero() {
   const author = authorRel?.attributes?.name || "No Author";
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   // const coverFile = coverRel?.attributes?.fileName;
-  const coverUrl = "https://w.wallhaven.cc/full/2y/wallhaven-2yjg26.jpg";
+  const wallhavenCoverUrl = "https://w.wallhaven.cc/full/2y/wallhaven-2yjg26.jpg";
   const latestChapterId = manga?.attributes?.latestUploadedChapter || "";
 
   // ✅ Always points to English latest now
@@ -120,9 +120,11 @@ export default function Hero() {
         {/* Background */}
         <div className="absolute inset-0">
           <img
-            src={coverUrl}
+            src={wallhavenCoverUrl}
             alt="Hero Manga Cover"
             className="w-full h-full object-cover opacity-30"
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a2e] via-[#1a1a2e]/80 to-transparent"></div>
         </div>
@@ -134,9 +136,11 @@ export default function Hero() {
             <div className="relative group">
               <div className="w-48 h-72 lg:w-56 lg:h-80 rounded-xl overflow-hidden shadow-2xl border-2 border-[#c77dff]/20 group-hover:border-[#c77dff]/40 transition-all duration-300">
                 <img
-                  src={coverUrl}
+                  src={wallhavenCoverUrl}
                   alt={title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                 />
               </div>
               <div className="absolute -top-3 -right-3 bg-gradient-to-r from-[#c77dff] to-[#7209b7] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">

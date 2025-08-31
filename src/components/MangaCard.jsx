@@ -39,7 +39,7 @@ export default function MangaCard({ mangaList }) {
         const title = getMangaTitle(manga);
         const id = manga.id;
         const imageUrl = getCoverUrl(manga);
-        console.log('Cover URL for', title, ':', imageUrl);
+        // Cover URL logging removed for security
 
         const isCurrentlyBookmarked = isBookmarked(id);
         const canSave = canAddMore() || isCurrentlyBookmarked;
@@ -58,7 +58,7 @@ export default function MangaCard({ mangaList }) {
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
-                    console.warn('Cover image failed to load for manga:', title, 'URL:', e.target.src);
+                    // Cover image failed to load - using fallback
                     // Prevent infinite loops by checking if we're already showing a fallback
                     if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
                       // First try placehold.co service
@@ -70,7 +70,7 @@ export default function MangaCard({ mangaList }) {
                     // If already using inline SVG, do nothing to prevent infinite loop
                   }}
                   onLoad={() => {
-                    console.log('Cover image loaded successfully for:', title);
+                    // Cover image loaded successfully
                   }}
                 />
 

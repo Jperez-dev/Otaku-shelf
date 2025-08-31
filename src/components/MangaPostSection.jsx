@@ -81,7 +81,7 @@ function PopularList({ mangaList }) {
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  console.warn('Cover image failed to load for manga:', title, 'URL:', e.target.src);
+                  // Cover image failed to load - using fallback
                   // Prevent infinite loops by checking if we're already showing a fallback
                   if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
                     // First try placehold.co service
@@ -93,7 +93,7 @@ function PopularList({ mangaList }) {
                   // If already using inline SVG, do nothing to prevent infinite loop
                 }}
                 onLoad={() => {
-                  console.log('Cover image loaded successfully for:', title);
+                  // Cover image loaded successfully
                 }}
               />
             </Link>
@@ -165,24 +165,24 @@ export default function MangaPostSection({ section }) {
               let statsMap = {};
               try {
                 const ids = mangaDataRaw.map((m) => m.id);
-                console.log('MangaPostSection: Fetching stats for', ids.length, 'manga');
+                // Fetching stats for manga batch
                 const params = ids.map((id) => `manga[]=${id}`).join("&");
                 const statsRes = await apiManga.get(`/statistics/manga?${params}`);
-                console.log('MangaPostSection: Stats response:', statsRes.data);
+                // Processing stats response
                 if (statsRes.data && statsRes.data.statistics) {
                   statsMap = statsRes.data.statistics;
-                  console.log('MangaPostSection: Stats map keys:', Object.keys(statsMap));
+                  // Stats loaded successfully
                 } else {
-                  console.warn('MangaPostSection: Invalid stats response structure:', statsRes.data);
+                  // Invalid stats response structure
                   statsMap = {};
                 }
               } catch (statsError) {
-                console.warn('MangaPostSection: Failed to fetch statistics, continuing without stats:', statsError);
+                // Failed to fetch statistics, continuing without stats
                 statsMap = {};
               }
               mangaData = mangaDataRaw.map((m) => {
                 const stats = statsMap && typeof statsMap === 'object' ? (statsMap[m.id] || {}) : {};
-                console.log(`MangaPostSection: Stats for ${m.id}:`, stats);
+                // Processing stats for manga
                 return {
                   ...m,
                   stats: stats,

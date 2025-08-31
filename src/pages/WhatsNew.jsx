@@ -52,7 +52,7 @@ export default function WhatsNew() {
           if (isMounted) setMangaList(recentManga);
         }
       } catch (error) {
-        console.error("Failed to fetch latest manga:", error);
+        // Failed to fetch latest manga
         if (isMounted) setMangaList([]);
       } finally {
         if (isMounted) setLoading(false);

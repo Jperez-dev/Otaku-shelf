@@ -14,15 +14,15 @@ export const apiManga = axios.create({
   },
 });
 
-// Add request interceptor for logging in development
+// Add request interceptor for logging in development only
 if (isDevelopment) {
   apiManga.interceptors.request.use(
     (config) => {
-      console.log('API Request:', config.method?.toUpperCase(), config.url);
+      // API Request logging in development only
       return config;
     },
     (error) => {
-      console.error('API Request Error:', error);
+      // API Request Error in development
       return Promise.reject(error);
     }
   );
@@ -34,15 +34,18 @@ apiManga.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response) {
-      // Server responded with error status
-      console.error('API Error Response:', error.response.status, error.response.data);
-    } else if (error.request) {
-      // Request was made but no response received
-      console.error('API No Response:', error.request);
-    } else {
-      // Something else happened
-      console.error('API Error:', error.message);
+    // Only log errors in development to avoid exposing sensitive information
+    if (isDevelopment) {
+      if (error.response) {
+        // Server responded with error status
+        console.error('API Error Response:', error.response.status, error.response.data);
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error('API No Response:', error.request);
+      } else {
+        // Something else happened
+        console.error('API Error:', error.message);
+      }
     }
     return Promise.reject(error);
   }
