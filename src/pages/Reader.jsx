@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchChapterPages, fetchChapters } from "../services/mangaService";
+import { fetchChapterPages } from "../services/mangaService";
+import { apiManga } from "../utils/axiosConfig";
+import toast from "react-hot-toast";
 
 export default function Reader() {
   const { chapterId } = useParams();
@@ -9,6 +11,7 @@ export default function Reader() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [chapterInfo, setChapterInfo] = useState(null);
+  const [languageWarningShown, setLanguageWarningShown] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -17,11 +20,9 @@ export default function Reader() {
 
     const loadChapter = async () => {
       try {
-        // First, get chapter info to check language
-        const chapterResponse = await fetch(
-          `https://api.mangadex.org/chapter/${chapterId}`
-        );
-        const chapterData = await chapterResponse.json();
+        // First, get chapter info to check language using our API proxy
+        const chapterResponse = await apiManga.get(`/chapter/${chapterId}`);
+        const chapterData = chapterResponse.data;
 
         if (!isMounted) return;
 
@@ -35,9 +36,16 @@ export default function Reader() {
         const translatedLanguage =
           chapter.attributes?.translatedLanguage?.toLowerCase();
 
-        // Show language warning but don't block - let user decide
-        if (translatedLanguage && translatedLanguage !== "en") {
-          console.log(`Chapter is in ${translatedLanguage}, not English`);
+        // Show language warning toast but don't block - let user decide
+        if (translatedLanguage && translatedLanguage !== "en" && !languageWarningShown) {
+          toast.error(
+            `⚠️ This chapter is in ${translatedLanguage.toUpperCase()}, not English. You can still read it.`,
+            {
+              duration: 5000,
+              position: 'top-center',
+            }
+          );
+          setLanguageWarningShown(true);
         }
 
         // Try to fetch chapter pages
@@ -52,13 +60,22 @@ export default function Reader() {
       } catch (err) {
         console.error("Error loading chapter:", err);
         if (isMounted) {
-          setError({
-            type: "fetch",
-            message:
-              "Failed to load chapter. This might be due to missing translations or API issues.",
-            details: err.message,
-            chapterInfo: chapterInfo,
-          });
+          // Check if it's a network/CORS error
+          if (err.message.includes('Failed to fetch') || err.name === 'AxiosError') {
+            setError({
+              type: "network",
+              message: "Failed to load chapter. This might be due to network issues or the chapter doesn't exist.",
+              details: err.message,
+              chapterInfo: chapterInfo,
+            });
+          } else {
+            setError({
+              type: "fetch",
+              message: "Failed to load chapter. This might be due to missing translations or API issues.",
+              details: err.message,
+              chapterInfo: chapterInfo,
+            });
+          }
         }
       } finally {
         if (isMounted) {
@@ -71,7 +88,7 @@ export default function Reader() {
     return () => {
       isMounted = false;
     };
-  }, [chapterId]);
+  }, [chapterId, languageWarningShown]);
 
   const handleContinueAnyway = async () => {
     setLoading(true);
