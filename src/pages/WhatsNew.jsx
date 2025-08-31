@@ -8,6 +8,11 @@ export default function WhatsNew() {
   const [page, setPage] = useState(0);
   const pageSize = 30;
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);

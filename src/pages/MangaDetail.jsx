@@ -45,6 +45,11 @@ export default function MangaDetailPage() {
   const bookmarkCount = getBookmarkCount();
   const maxBookmarks = getMaxBookmarks();
 
+  // Scroll to top when component mounts or ID changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [id]);
+
   useEffect(() => {
     let isMounted = true;
     async function load() {
@@ -544,7 +549,10 @@ export default function MangaDetailPage() {
               return (
                 <div
                   key={m.id}
-                  onClick={() => navigate(`/manga/${m.id}`)}
+                  onClick={() => {
+                    navigate(`/manga/${m.id}`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="bg-[#2a2a4e] rounded-2xl p-2 hover:bg-[#3a3a5e] transition-colors duration-300 cursor-pointer group"
                 >
                   <div className="aspect-[2/3] rounded-lg mb-2 overflow-hidden">

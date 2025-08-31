@@ -14,6 +14,11 @@ export default function Explore() {
   const [page, setPage] = useState(0);
   const pageSize = 24;
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);

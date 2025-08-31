@@ -13,6 +13,11 @@ export default function Reader() {
   const [chapterInfo, setChapterInfo] = useState(null);
   const [languageWarningShown, setLanguageWarningShown] = useState(false);
 
+  // Scroll to top when component mounts or chapter ID changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [chapterId]);
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
