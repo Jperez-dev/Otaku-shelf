@@ -98,11 +98,13 @@ export default function MangaDetailPage() {
   }, [id, chapterPage]);
 
   const title = useMemo(() => (manga ? getMangaTitle(manga) : ""), [manga]);
-  const coverImage = useMemo(() => (manga ? getCoverUrl(manga) : ""), [manga]);
   const authorName = useMemo(() => {
     const authorRel = manga?.relationships?.find((r) => r.type === "author");
     return authorRel?.attributes?.name || "Unknown";
   }, [manga]);
+
+  // Calculate cover image directly like in MangaCard to avoid memoization issues
+  const coverImage = manga ? getCoverUrl(manga) : "";
 
   if (isLoading || !manga) {
     return (
