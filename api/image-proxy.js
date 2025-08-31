@@ -22,8 +22,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'URL parameter is required' });
     }
 
-    // Validate the URL is from MangaDX
-    if (!url.includes('uploads.mangadex.org')) {
+    // Validate the URL is from MangaDX (covers and chapter images)
+    const isMangaDXUrl = url.includes('uploads.mangadex.org') || url.includes('.mangadex.network');
+    if (!isMangaDXUrl) {
       return res.status(400).json({ error: 'Only MangaDX images are allowed' });
     }
 
