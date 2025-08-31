@@ -17,15 +17,25 @@ export default async function handler(req, res) {
 
   try {
     // Build the query string from request parameters
-    // Handle array parameters like manga[]=id1&manga[]=id2
-    const queryString = new URLSearchParams(req.query).toString();
+    // Handle array parameters properly for MangaDX API
+    const params = new URLSearchParams();
     
-    // Log the request for debugging
-    console.log('Statistics API request query:', req.query);
-    console.log('Statistics API query string:', queryString);
+    for (const [key, value] of Object.entries(req.query)) {
+      if (Array.isArray(value)) {
+        // Handle array parameters like manga[] properly
+        value.forEach(item => {
+          params.append(key, item);
+        });
+      } else {
+        params.append(key, value);
+      }
+    }
     
+    const queryString = params.toString();
     const mangaDxUrl = `https://api.mangadex.org/statistics/manga${queryString ? '?' + queryString : ''}`;
 
+    console.log('Statistics API request query:', req.query);
+    console.log('Statistics API query string:', queryString);
     console.log('Proxying statistics request to:', mangaDxUrl);
 
     // Fetch from MangaDX API
