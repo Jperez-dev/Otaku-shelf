@@ -17,7 +17,13 @@ export default async function handler(req, res) {
 
   try {
     // Build the query string from request parameters
+    // Handle array parameters like manga[]=id1&manga[]=id2
     const queryString = new URLSearchParams(req.query).toString();
+    
+    // Log the request for debugging
+    console.log('Statistics API request query:', req.query);
+    console.log('Statistics API query string:', queryString);
+    
     const mangaDxUrl = `https://api.mangadex.org/statistics/manga${queryString ? '?' + queryString : ''}`;
 
     console.log('Proxying statistics request to:', mangaDxUrl);
@@ -34,13 +40,17 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       console.error('MangaDX Statistics API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('MangaDX Statistics API error body:', errorText);
       return res.status(response.status).json({ 
-        error: `MangaDX Statistics API error: ${response.status} ${response.statusText}` 
+        error: `MangaDX Statistics API error: ${response.status} ${response.statusText}`,
+        details: errorText
       });
     }
 
     const data = await response.json();
-
+    console.log('Statistics API response received, data keys:', Object.keys(data));
+    
     // Set caching headers
     res.setHeader('Cache-Control', 'public, max-age=600'); // Cache for 10 minutes
 

@@ -52,7 +52,7 @@ function PopularList({ mangaList }) {
         const imageUrl = getCoverUrl(manga);
 
         const authorName =
-          manga.relationships[0].attributes.name || "No Author";
+          manga.relationships?.find((r) => r.type === "author")?.attributes?.name || "No Author";
 
         const followerCount = manga.stats?.follows || "failed to load";
 

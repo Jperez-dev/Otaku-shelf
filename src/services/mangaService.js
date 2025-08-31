@@ -2,6 +2,11 @@ import { apiManga } from "../utils/axiosConfig";
 
 // Build cover image URL from a manga object with relationships
 export function getCoverUrl(manga) {
+  if (!manga || !manga.id) {
+    console.warn('getCoverUrl: Invalid manga object:', manga);
+    return getFallbackCoverUrl();
+  }
+  
   const mangaId = manga.id;
   const coverRel = manga.relationships?.find((rel) => rel.type === "cover_art");
   const fileName = coverRel?.attributes?.fileName;
@@ -9,9 +14,6 @@ export function getCoverUrl(manga) {
   // Debug logging for deployment issues
   if (!fileName) {
     console.warn('No cover filename found for manga:', mangaId);
-  }
-  
-  if (!fileName) {
     return getFallbackCoverUrl();
   }
   
@@ -59,11 +61,21 @@ export async function fetchStatisticsBatch(mangaIds) {
     const params = mangaIds
       .map((id) => `manga[]=${encodeURIComponent(id)}`)
       .join("&");
+    console.log('fetchStatisticsBatch: Requesting stats for', mangaIds.length, 'manga');
+    console.log('fetchStatisticsBatch: Request params:', params);
+    
     const res = await apiManga.get(`/statistics/manga?${params}`);
+    console.log('fetchStatisticsBatch: Response:', res.data);
+    
     return res.data?.statistics || {};
   } catch (error) {
     console.error('Failed to fetch statistics batch:', error);
-    return {};
+    // Return empty stats for each manga ID to avoid undefined errors
+    const emptyStats = {};
+    mangaIds.forEach(id => {
+      emptyStats[id] = {};
+    });
+    return emptyStats;
   }
 }
 
