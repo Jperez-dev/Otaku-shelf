@@ -15,14 +15,17 @@ export function getCoverUrl(manga) {
     return getFallbackCoverUrl();
   }
   
-  // Use proxy path in production to avoid referrer policy issues
+  const originalImageUrl = `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`;
+  
+  // In development, try direct URL first, in production use Vercel function
   const isDevelopment = import.meta.env.DEV;
+  
   if (isDevelopment) {
-    // In development, try direct URL with referrer policy
-    return `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.256.jpg`;
+    // In development, return direct URL (may have CORS issues but will work for testing)
+    return originalImageUrl;
   } else {
-    // In production, use Vercel proxy to bypass referrer restrictions
-    return `/covers/${mangaId}/${fileName}.256.jpg`;
+    // In production, use Vercel serverless function
+    return `/api/image-proxy?url=${encodeURIComponent(originalImageUrl)}`;
   }
 }
 
@@ -194,10 +197,18 @@ export async function fetchChapterPages(chapterId, useDataSaver = true) {
   const chapter = atHome.data?.chapter;
   if (!baseUrl || !chapter) return [];
   const files = useDataSaver ? chapter.dataSaver : chapter.data;
-  return files.map(
-    (file) =>
-      `${baseUrl}/${useDataSaver ? "data-saver" : "data"}/${
-        chapter.hash
-      }/${file}`
-  );
+  
+  const isDevelopment = import.meta.env.DEV;
+  
+  return files.map((file) => {
+    const originalImageUrl = `${baseUrl}/${useDataSaver ? "data-saver" : "data"}/${chapter.hash}/${file}`;
+    
+    if (isDevelopment) {
+      // In development, return direct URL
+      return originalImageUrl;
+    } else {
+      // In production, use Vercel serverless function
+      return `/api/image-proxy?url=${encodeURIComponent(originalImageUrl)}`;
+    }
+  });
 }
