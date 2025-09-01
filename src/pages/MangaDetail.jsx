@@ -47,7 +47,7 @@ export default function MangaDetailPage() {
 
   // Scroll to top when component mounts or ID changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
   useEffect(() => {
@@ -151,10 +151,13 @@ export default function MangaDetailPage() {
                     onError={(e) => {
                       // Main cover image failed to load
                       // Prevent infinite loops by checking if we're already showing a fallback
-                      if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
+                      if (
+                        !e.target.src.includes("data:image") &&
+                        !e.target.src.includes("placehold.co")
+                      ) {
                         // First try placehold.co service
                         e.target.src = getFallbackCoverUrlWithTitle(title);
-                      } else if (e.target.src.includes('placehold.co')) {
+                      } else if (e.target.src.includes("placehold.co")) {
                         // If external service fails, use inline SVG (guaranteed to work)
                         e.target.src = getFallbackCoverUrl();
                       }
@@ -236,7 +239,12 @@ export default function MangaDetailPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <BookOpen className="w-4 h-4 text-[#c77dff]" />
-                      <span>{Number(stats.comments || 0)} comments</span>
+                      <span>
+                        {Number(
+                          stats.comments.repliesCount || 0
+                        ).toLocaleString()}{" "}
+                        comments
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="w-4 h-4 text-[#c77dff]" />
@@ -484,10 +492,11 @@ export default function MangaDetailPage() {
                             </div>
                             <div className="flex-1">
                               <h4 className="text-white font-semibold group-hover:text-[#c77dff] transition-colors duration-300">
-                                {chapterTitle ? 
-                                  `Chapter ${chapterNumber || ""}: ${chapterTitle}` : 
-                                  `Chapter ${chapterNumber || "Unknown"}`
-                                }
+                                {chapterTitle
+                                  ? `Chapter ${
+                                      chapterNumber || ""
+                                    }: ${chapterTitle}`
+                                  : `Chapter ${chapterNumber || "Unknown"}`}
                               </h4>
                               <div className="flex items-center space-x-3 mt-1">
                                 <p className="text-gray-400 text-sm">
@@ -508,15 +517,28 @@ export default function MangaDetailPage() {
                                 </span>
                                 {chapterNumber && (
                                   <span className="text-xs text-gray-500">
-                                    #{parseFloat(chapterNumber).toFixed(chapterNumber % 1 === 0 ? 0 : 1)}
+                                    #
+                                    {parseFloat(chapterNumber).toFixed(
+                                      chapterNumber % 1 === 0 ? 0 : 1
+                                    )}
                                   </span>
                                 )}
                               </div>
                             </div>
                           </div>
                           <div className="text-gray-500">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
                             </svg>
                           </div>
                         </div>
@@ -560,7 +582,7 @@ export default function MangaDetailPage() {
                   key={m.id}
                   onClick={() => {
                     navigate(`/manga/${m.id}`);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   className="bg-[#2a2a4e] rounded-2xl p-2 hover:bg-[#3a3a5e] transition-colors duration-300 cursor-pointer group"
                 >
@@ -574,10 +596,13 @@ export default function MangaDetailPage() {
                       onError={(e) => {
                         // Related manga cover failed to load
                         // Prevent infinite loops by checking if we're already showing a fallback
-                        if (!e.target.src.includes('data:image') && !e.target.src.includes('placehold.co')) {
+                        if (
+                          !e.target.src.includes("data:image") &&
+                          !e.target.src.includes("placehold.co")
+                        ) {
                           // First try placehold.co service
                           e.target.src = getFallbackCoverUrlWithTitle(title);
-                        } else if (e.target.src.includes('placehold.co')) {
+                        } else if (e.target.src.includes("placehold.co")) {
                           // If external service fails, use inline SVG (guaranteed to work)
                           e.target.src = getFallbackCoverUrl();
                         }
